@@ -1,0 +1,10 @@
+C:\Users\Ludwig Bogsveen\Documents\Programming\Rust\game_engine_project\rust_engine_renderer\target\debug\deps\colored-1bd3061d17c7a4dc.rmeta: C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\lib.rs C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\color.rs C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\control.rs C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\style.rs
+
+C:\Users\Ludwig Bogsveen\Documents\Programming\Rust\game_engine_project\rust_engine_renderer\target\debug\deps\libcolored-1bd3061d17c7a4dc.rlib: C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\lib.rs C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\color.rs C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\control.rs C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\style.rs
+
+C:\Users\Ludwig Bogsveen\Documents\Programming\Rust\game_engine_project\rust_engine_renderer\target\debug\deps\colored-1bd3061d17c7a4dc.d: C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\lib.rs C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\color.rs C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\control.rs C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\style.rs
+
+C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\lib.rs:
+C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\color.rs:
+C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\control.rs:
+C:\Users\Ludwig\ Bogsveen\.cargo\registry\src\github.com-1ecc6299db9ec823\colored-1.9.3\src\style.rs:

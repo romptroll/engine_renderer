@@ -1,0 +1,10 @@
+^C:\USERS\LUDWIG BOGSVEEN\DOCUMENTS\PROGRAMMING\RUST\GAME_ENGINE_PROJECT\RUST_ENGINE_RENDERER\TARGET\DEBUG\BUILD\GLFW-SYS-758986FAAE30A854\OUT\BUILD\CMAKEFILES\32EDDA41263D557530882C6BF7F5F527\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/Ludwig Bogsveen/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-sys-3.3.2" "-BC:/Users/Ludwig Bogsveen/Documents/Programming/Rust/game_engine_project/rust_engine_renderer/target/debug/build/glfw-sys-758986faae30a854/out/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/Ludwig Bogsveen/Documents/Programming/Rust/game_engine_project/rust_engine_renderer/target/debug/build/glfw-sys-758986faae30a854/out/build/GLFW.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

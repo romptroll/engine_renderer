@@ -1,0 +1,16 @@
+
+[package]
+name = "engine_renderer"
+version = "0.0.0"
+authors = ["Tor Ludwig Bogsveen <romptroll@hotmail.com>"]
+edition = "2018"
+
+
+[dependencies]
+gl = "0.14.0"
+gl_loader = "0.1.2"
+image = "0.23.0"
+freetype-rs = "0.24.0"
+colored = "1.9.3"
+bus = "2.2.3"
+glfw = "0.37.0"
