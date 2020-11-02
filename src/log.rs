@@ -25,5 +25,5 @@
 
  pub fn info(message: &str)      { println!("{}", format!("[INFO] {}", message).green().bold())  }
  pub fn warn(message: &str)      { println!("{}", format!("[WARN] {}", message).yellow().bold()) }
- pub fn error(message: &str)     { println!("{}", format!("[ERROR] {}", message).red().bold()); debug_assert!(false)   }
+ pub fn error(message: &str)     { println!("{}", format!("[ERROR] {}", message).red().bold());  }
  pub fn fatal(message: &str)     { panic!("{}", format!("[FATAL] {}", message).red().bold())     }

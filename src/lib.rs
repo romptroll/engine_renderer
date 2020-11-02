@@ -37,12 +37,14 @@ pub mod window;
 pub mod shader;
 pub mod matrix;
 pub mod vector;
+pub mod graphics3d;
 
 #[cfg(test)]
 mod tests {
     use crate::shader::Shader;
     use crate::renderer;
     use crate::graphics::*;
+    use crate::graphics3d::*;
     use crate::buffer::*;
     use crate::matrix::*;
 
@@ -90,85 +92,30 @@ mod tests {
         win.make_current();
         renderer::init_gl(&mut win);
 
-
-        let cube_vertex_data = [
-            -1.0, -1.0, -1.0,	//DSW 0
-            1.0, -1.0, -1.0,	//DSE 1
-            -1.0, 1.0, -1.0,	//USW 2
-            1.0, 1.0, -1.0,		//USE 3
-            -1.0, -1.0, 1.0,	//DNW 4
-            1.0, -1.0, 1.0,		//DNE 5 
-            -1.0, 1.0, 1.0,		//UNW 6
-            1.0, 1.0, 1.0		//UNE 7
-        ];
-    
-        let cube_index_data = [
-            //NORTH
-            4, 6, 5, //DNW, UNW, DNE 
-            5, 6, 7, //DNE, UNW, UNE, 
-            
-            //SOUTH
-            0, 2, 1, //DSW, USW, DSE
-            1, 2, 3, //DSE, USW, USE
-
-            //UP
-            2, 6, 3, //USW, UNW, USE
-            3, 6, 7, //USE, UNW, UNE
-
-            //DOWN
-            0, 4, 1, //DSW, DNW, DSE
-            1, 4, 5, //DSE, DNW, DNE
-
-            //EAST
-            5, 7, 1, //DNE, UNE, DSE
-            1, 7, 3, //DSE, UNE, USE
-
-            //WEST
-            4, 6, 0, //DNW, UNW, DSW
-            0, 6, 2, //DSW, UNW, USW
-        ];
-
-        let mut vertex_buffer_layout = VertexBufferLayout::new();
-        vertex_buffer_layout.push_f32(3); //XYZ
-
-        let vertex_buffer = VertexBuffer::new(&cube_vertex_data);
-        let mut vertex_array = VertexArray::new();
-        vertex_array.add_buffer(&vertex_buffer, &vertex_buffer_layout);
-        vertex_array.bind();
-
-        let index_buffer = IndexBuffer::new(&cube_index_data);
-        index_buffer.bind();
-
-        let cube_shader = Shader::from_file("res/shaders/cube.glsl");
-
-        let mut gfx = Graphics::new(&mut win);
-
+        let mut gfx = Graphics3D::new(&mut win);
         let mut m = 0.0;
 
         unsafe { renderer::std_renderer::enable(renderer::std_renderer::Capability::DepthTest); }
 
+        // Projection Matrix
+        let fov = 90.0;
+        let aspect_ratio = gfx.frame_height() as f32 / gfx.frame_width() as f32;
+        let fov_rad = 1.0 / (fov * 0.5 / 180.0 * std::f32::consts::PI).tan();
+
+        let projection = Mat4x4f::projection(aspect_ratio, fov_rad, 100.0, 0.1);
+        
+
         while !win.should_close() {
+            let model = Mat4x4f::mult(&Mat4x4f::rotation_y(m), &Mat4x4f::rotation_x(1.0));
+            let model = Mat4x4f::mult(&Mat4x4f::translation(0.0, 0.0, 2.0), &model);
+            let mvp = Mat4x4f::mult(&projection, &model);
+            m += 0.001;
 
             unsafe { renderer::std_renderer::clear(renderer::std_renderer::ClearTarget::Depth); }
-            gfx.clear_rgba8888(0x00_00_00_00);
+            gfx.clear_rgba8888(0x00_00_00_FF);
 
-            m += 0.01;
-
-            // Projection Matrix
-            let fov = 90.0;
-            let aspect_ratio = gfx.frame_height() as f32 / gfx.frame_width() as f32;
-            let fov_rad = 1.0 / (fov * 0.5 / 180.0 * std::f32::consts::PI).tan();
-
-            let projection = Mat4x4f::projection(aspect_ratio, fov_rad, 100.0, 0.1);
-            let model = Mat4x4f::mult(&Mat4x4f::rotation_y(m), &Mat4x4f::rotation_x(10.5));
-            let model = Mat4x4f::mult(&Mat4x4f::translation(0.0, 0.0, 4.0), &model);
-            let mvp = Mat4x4f::mult(&projection, &model);
-
-            unsafe {
-                cube_shader.bind();
-                cube_shader.upload_from_name_4x4f("u_MVP", &mvp.values);
-                renderer::std_renderer::draw_elements(renderer::std_renderer::RenderingPrimitive::Triangles, cube_index_data.len() as i32); 
-            }
+            gfx.set_color(m%1.0, 1.0-m%1.0, 0.0, 1.0);
+            gfx.fill_cube(0.0, 0.0, 0.0, 0.8, 0.8, 0.8,  &mvp);
 
             gfx.update();
             gfx.flush();
