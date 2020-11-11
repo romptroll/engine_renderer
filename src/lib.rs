@@ -41,11 +41,9 @@ pub mod graphics3d;
 
 #[cfg(test)]
 mod tests {
-    use crate::shader::Shader;
     use crate::renderer;
     use crate::graphics::*;
     use crate::graphics3d::*;
-    use crate::buffer::*;
     use crate::matrix::*;
 
     #[test]
