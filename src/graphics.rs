@@ -29,6 +29,7 @@ use crate::texture;
 use crate::font;
 use crate::matrix;
 use crate::window;
+use crate::color::*;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum LastDraw {
@@ -41,7 +42,7 @@ pub enum LastDraw {
 }
 
 struct DrawingInformation {
-    color_rgba:         f32,
+    color:         Color,
     translation:        (f32, f32),
     scale:              (f32, f32),
     line_width:         f32,
@@ -51,7 +52,7 @@ struct DrawingInformation {
 impl DrawingInformation {
     pub fn new() -> DrawingInformation {
         DrawingInformation {
-            color_rgba: unsafe { std::mem::transmute(0xFFFFFFFFu32) },
+            color: Color::from(0xFF_FF_FF_FF),
             translation: (0.0, 0.0),
             scale: (1.0, 1.0),
             line_width: 0.01,
@@ -202,29 +203,14 @@ impl Graphics {
         }
     }
 
-    pub fn set_color(&mut self, r: f32, g: f32, b: f32, a: f32) {
-        let r = (r * 255.0) as u32;
-        let g = (g * 255.0) as u32;
-        let b = (b * 255.0) as u32;
-        let a = (a * 255.0) as u32;
-        let color = a | (b << 8) | (g << 16) | (r << 24);
-        self.dw.color_rgba = unsafe { std::mem::transmute(color) };
+    pub fn set_color(&mut self, color: Color) {
+        self.dw.color = color;
     }
 
-    pub fn set_color_rgba8888(&mut self, color_rgba8888: u32) { self.dw.color_rgba = unsafe { std::mem::transmute(color_rgba8888) }}
-
-    pub fn clear(&mut self, r: f32, g: f32, b: f32, a: f32) {
+    pub fn clear(&mut self, color: Color) {
         self.flush();
         unsafe {
-            renderer::std_renderer::set_clear_color(r, g, b, a);
-            renderer::std_renderer::clear(renderer::std_renderer::ClearTarget::Color);
-        }
-    }
-
-    pub fn clear_rgba8888(&mut self, color: u32) {
-        self.flush();
-        unsafe {
-            renderer::std_renderer::set_clear_color_rgba8888(color);
+            renderer::std_renderer::set_clear_color(color);
             renderer::std_renderer::clear(renderer::std_renderer::ClearTarget::Color);
         }
     }
@@ -268,7 +254,7 @@ impl Graphics {
         let y2 = y2 * self.dw.scale.1 + self.dw.translation.1;
         let vertices = vec!(
             x1, y1, x2, y2,
-            self.dw.color_rgba,
+            f32::from(self.dw.color),
         );
 
         self.should_flush(LastDraw::Line);
@@ -357,7 +343,7 @@ impl Graphics {
         let vertices = [
             x * self.dw.scale.0 + self.dw.translation.0, y * self.dw.scale.1 + self.dw.translation.1, width * self.dw.scale.0, height * self.dw.scale.1,
             uvx, uvy, uvw, uvh,
-            self.dw.color_rgba,
+            f32::from(self.dw.color),
         ];
 
         self.should_flush(LastDraw::Sprite);
@@ -367,7 +353,7 @@ impl Graphics {
     fn fill_rect_no_texture(&mut self, x: f32, y: f32, width: f32, height: f32) {
         let vertices = [
             x * self.dw.scale.0 + self.dw.translation.0, y * self.dw.scale.1 + self.dw.translation.1, width * self.dw.scale.0, height * self.dw.scale.1,
-            self.dw.color_rgba,
+            f32::from(self.dw.color),
         ];
 
         self.should_flush(LastDraw::Rect);
@@ -386,7 +372,7 @@ impl Graphics {
     pub fn fill_ellipse(&mut self, x: f32, y: f32, width: f32, height: f32) {
         let vertices = vec!(
             x * self.dw.scale.0 + self.dw.translation.0, y * self.dw.scale.1 + self.dw.translation.1, width * self.dw.scale.0, height * self.dw.scale.1,
-            self.dw.color_rgba,
+            f32::from(self.dw.color),
         );
 
         self.should_flush(LastDraw::Ellipse);
@@ -566,29 +552,14 @@ impl Graphics2D {
         }
     }
 
-    pub fn set_color(&mut self, r: f32, g: f32, b: f32, a: f32) {
-        let r = (r * 255.0) as u32;
-        let g = (g * 255.0) as u32;
-        let b = (b * 255.0) as u32;
-        let a = (a * 255.0) as u32;
-        let color = a | (b << 8) | (g << 16) | (r << 24);
-        self.dw.color_rgba = unsafe { std::mem::transmute(color) };
+    pub fn set_color(&mut self, color: Color) {
+        self.dw.color = color;
     }
 
-    pub fn set_color_rgba8888(&mut self, color_rgba8888: u32) { self.dw.color_rgba = unsafe { std::mem::transmute(color_rgba8888) }}
-
-    pub fn clear(&mut self, r: f32, g: f32, b: f32, a: f32) {
+    pub fn clear(&mut self, color: Color) {
         self.flush();
         unsafe {
-            renderer::std_renderer::set_clear_color(r, g, b, a);
-            renderer::std_renderer::clear(renderer::std_renderer::ClearTarget::Color);
-        }
-    }
-
-    pub fn clear_rgba8888(&mut self, color: u32) {
-        self.flush();
-        unsafe {
-            renderer::std_renderer::set_clear_color_rgba8888(color);
+            renderer::std_renderer::set_clear_color(color);
             renderer::std_renderer::clear(renderer::std_renderer::ClearTarget::Color);
         }
     }
@@ -625,7 +596,7 @@ impl Graphics2D {
         
         let mut vertices = vec!(
             x1, y1, x2, y2,
-            self.dw.color_rgba,
+            f32::from(self.dw.color),
         );
 
         unsafe { vertices.extend(mat.values.iter()); }
@@ -682,7 +653,7 @@ impl Graphics2D {
         let mut vertices = vec!(
             x * self.dw.scale.0 + self.dw.translation.0, y * self.dw.scale.1 + self.dw.translation.1, width * self.dw.scale.0, height * self.dw.scale.1,
             uvx, uvy, uvw, uvh,
-            self.dw.color_rgba,
+            f32::from(self.dw.color),
         );
 
         unsafe { vertices.extend(mat.values.iter()); }
@@ -695,7 +666,7 @@ impl Graphics2D {
     fn fill_rect_no_texture(&mut self, x: f32, y: f32, width: f32, height: f32, mat: &matrix::Mat3x3f) {
         let vertices = [
             x * self.dw.scale.0 + self.dw.translation.0, y * self.dw.scale.1 + self.dw.translation.1, width * self.dw.scale.0, height * self.dw.scale.1,
-            self.dw.color_rgba,
+            f32::from(self.dw.color),
         ];
         
         //unsafe { vertices.extend_from_slice(&mat.values); }
@@ -717,7 +688,7 @@ impl Graphics2D {
     pub fn fill_ellipse(&mut self, x: f32, y: f32, width: f32, height: f32, mat: &matrix::Mat3x3f) {
         let mut vertices = vec!(
             x * self.dw.scale.0 + self.dw.translation.0, y * self.dw.scale.1 + self.dw.translation.1, width * self.dw.scale.0, height * self.dw.scale.1,
-            self.dw.color_rgba,
+            f32::from(self.dw.color),
         );
 
         unsafe { vertices.extend(mat.values.iter()); }

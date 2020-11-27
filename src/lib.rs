@@ -38,6 +38,7 @@ pub mod shader;
 pub mod matrix;
 pub mod vector;
 pub mod graphics3d;
+pub mod color;
 
 #[cfg(test)]
 mod tests {
@@ -45,6 +46,7 @@ mod tests {
     use crate::graphics::*;
     use crate::graphics3d::*;
     use crate::matrix::*;
+    use crate::color::*;
 
     #[test]
     fn multiple_windows() {
@@ -70,7 +72,7 @@ mod tests {
 
             if m >= 2.0 {
                 m -= 2.0;
-                gfx.clear_rgba8888(0x00)
+                gfx.clear(Color::from(0x00))
             }
 
             gfx.set_scale(m, m);
@@ -110,9 +112,9 @@ mod tests {
             m += 0.001;
 
             unsafe { renderer::std_renderer::clear(renderer::std_renderer::ClearTarget::Depth); }
-            gfx.clear_rgba8888(0x00_00_00_FF);
+            gfx.clear(Color::from(0x00_00_00_FF));
 
-            gfx.set_color(m%1.0, 1.0-m%1.0, 0.0, 1.0);
+            gfx.set_color(Color::from((m%1.0, 1.0-m%1.0, 0.0, 1.0)));
             gfx.fill_cube(0.0, 0.0, 0.0, 0.8, 0.8, 0.8,  &mvp);
 
             gfx.update();

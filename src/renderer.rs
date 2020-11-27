@@ -21,9 +21,10 @@
  *   SOFTWARE.
  */
 
-
-
 pub mod std_renderer {
+
+    use crate::color::Color;
+
     #[repr(u32)]
     pub enum RenderingPrimitive {
         Triangles = gl::TRIANGLES,
@@ -66,12 +67,9 @@ pub mod std_renderer {
     pub unsafe fn blend_func(sfactor: BlendMode, dfactor: BlendMode) { gl_call!(gl::BlendFunc(sfactor as u32, dfactor as u32)); }
     
     pub unsafe fn clear(target: ClearTarget) { gl_call!(gl::Clear(target as u32)); }
-    pub unsafe fn set_clear_color(r: f32, g: f32, b: f32, a: f32) { gl_call!(gl::ClearColor(r, g, b, a)); }
-    pub unsafe fn set_clear_color_rgba8888(color: u32) { 
-        let a = (color & 255) as f32 / 255.0;
-        let b = ((color >> 8) & 255) as f32 / 255.0;
-        let g = ((color >> 16) & 255) as f32 / 255.0;
-        let r = ((color >> 24) & 255) as f32 / 255.0;
+    
+    pub unsafe fn set_clear_color(rgba: Color) { 
+        let (r, g, b, a) = <(f32, f32, f32, f32)>::from(rgba);
         gl_call!(gl::ClearColor(r, g, b, a)); 
     }
 }
