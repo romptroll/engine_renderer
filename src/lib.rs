@@ -33,7 +33,6 @@ pub mod graphics;
 pub mod renderer;
 pub mod shape;
 pub mod texture;
-pub mod window;
 pub mod shader;
 pub mod matrix;
 pub mod vector;
@@ -47,12 +46,6 @@ mod tests {
     use crate::graphics3d::*;
     use crate::matrix::*;
     use crate::color::*;
-
-    #[test]
-    fn multiple_windows() {
-        assert!(crate::window::Window::new(600, 400, "win1").is_some());
-        assert!(crate::window::Window::new(600, 400, "win2").is_some());
-    }
 
     #[test]
     fn text() {
