@@ -203,6 +203,10 @@ impl Graphics {
         }
     }
 
+    pub fn set_font(&mut self, font: font::Font) {
+        self.font = font;
+    }
+
     pub fn set_color(&mut self, color: Color) {
         self.dw.color = color;
     }
@@ -550,6 +554,10 @@ impl Graphics2D {
                 self.last_draw = t;
             }
         }
+    }
+
+    pub fn set_font(&mut self, font: font::Font) {
+        self.font = font;
     }
 
     pub fn set_color(&mut self, color: Color) {

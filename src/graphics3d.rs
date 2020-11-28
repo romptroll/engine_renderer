@@ -180,6 +180,10 @@ impl Graphics3D {
         }
     }
 
+    pub fn set_font(&mut self, font: font::Font) {
+        self.font = font;
+    }
+
     pub fn set_color(&mut self, color: Color) {
         self.dw.color = color;
     }
