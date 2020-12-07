@@ -117,8 +117,30 @@ impl Font {
         }
     }
 
+    pub fn text_width(&self, text: &str) -> f32 {
+        let mut text_width = 0.0;
+
+
+        for c in text.chars() {
+            match &self.glyphs.get(&c) {
+                Some(g) => {
+                    text_width += g.size().0;
+                }
+                None => {
+                    text_width += self.width as f32;
+                }
+            }
+        }
+
+        
+        text_width
+    }
+
+    //TODO change name to more idiomatic "glyph".
+    //TODO return an option so not to crash the aplication when font fails to find an glyph.
     pub fn get_glyph(&self, glyph: char) -> &Glyph  {  &self.glyphs.get(&glyph).unwrap()    }
     pub fn width(&self)                  -> u32     {  self.width                           }
+    
 }
 
 impl Glyph {

@@ -161,7 +161,7 @@ pub mod graphics_renderer {
     }
 }
 
-use crate::window;
+use engine_core::window;
 
 pub fn flush() {
     unsafe { gl_call!(gl::Flush()); }

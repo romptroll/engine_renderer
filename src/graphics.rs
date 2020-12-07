@@ -28,8 +28,9 @@ use crate::buffer::VertexBufferLayout;
 use crate::texture;
 use crate::font;
 use crate::matrix;
-use crate::window;
 use crate::color::*;
+
+use engine_core::window;
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum LastDraw {

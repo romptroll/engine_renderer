@@ -30,6 +30,36 @@ impl Color {
     pub fn new(r: f32, g: f32, b: f32, a: f32) -> Color {
         Color::from((r, g, b, a))
     }
+
+    pub fn from_hsv(hue: f32, saturation: f32, value: f32) -> Color {
+        let h = hue * 360.0;
+        let s = saturation;
+        let v = value;
+
+        let c = s * v;
+        let x = c * (1.0 - ((h / 60.0) % 2.0 - 1.0).abs());
+        let m = v - c;
+
+        let mut r = 0.0;
+        let mut g = 0.0;
+        let mut b = 0.0;
+
+        if h < 60.0 {
+            r = c; g = x; b = 0.0;
+        } else if h < 120.0 {
+            r = x; g = c; b = 0.0;
+        } else if h < 180.0 {
+            r = 0.0; g = c; b = x;
+        } else if h < 240.0 {
+            r = 0.0; g = x; b = c;
+        } else if h < 300.0 {
+            r = x; g = 0.0; b = c;
+        } else if h < 360.0 {
+            r = c; g = 0.0; b = x;
+        }
+        
+        Color::new(r + m, g + m, b + m, 1.0)
+    }
 }
 
 impl From<u32> for Color { fn from(rgba: u32) -> Self { Self { rgba } } }

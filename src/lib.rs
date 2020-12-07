@@ -41,15 +41,26 @@ pub mod color;
 
 #[cfg(test)]
 mod tests {
-    use crate::renderer;
+    use crate::{font::Font, renderer};
     use crate::graphics::*;
     use crate::graphics3d::*;
     use crate::matrix::*;
     use crate::color::*;
 
+
+    #[test]
+    fn text_width() {
+        let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
+        win.make_current();
+        renderer::init_gl(&mut win);
+
+        let font = Font::new("res/fonts/arial.ttf", 64);
+        info_log!("{}", font.text_width("F u k"));
+    }
+
     #[test]
     fn text() {
-        let mut win = crate::window::Window::new(600, 400, "Graphics").unwrap();
+        let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
         win.make_current();
         renderer::init_gl(&mut win);
 
@@ -81,7 +92,7 @@ mod tests {
 
     #[test]
     fn cube() {
-        let mut win = crate::window::Window::new(600, 400, "Graphics").unwrap();
+        let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
         win.make_current();
         renderer::init_gl(&mut win);
 
