@@ -123,10 +123,19 @@ impl Font {
 
         for (i, c) in text.chars().enumerate() {
 
-            if i == 0 || i == text.len() - 1 {
+            if i == 0 {
+                match self.glyphs.get(&c) {
+                    Some(g) => {
+                        text_width += g.size().0 + g.bearing().0;
+                    }
+                    None => {
+                        text_width += self.width as f32;
+                    }
+                }
+            } else if i == text.len() - 1 {
                 match &self.glyphs.get(&c) {
                     Some(g) => {
-                        text_width += g.size().0;
+                        text_width += g.advance() - g.bearing().0;
                     }
                     None => {
                         text_width += self.width as f32;
