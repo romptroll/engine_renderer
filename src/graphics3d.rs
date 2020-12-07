@@ -126,9 +126,10 @@ impl Graphics3D {
         while !loop_done {
             match self.frame_buffer_listener.try_recv() {
                 Ok((width, height)) => {
+                    unsafe { gl_call!(gl::Viewport(0, 0, width as i32, height as i32)); };
                     self.frame_width = width;
                     self.frame_height = height;
-                    info_log!("message: &str");
+                    //info_log!("message: &str");
                 },
                 Err(_) => loop_done = true
             }
