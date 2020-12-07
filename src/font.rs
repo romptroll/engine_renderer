@@ -124,7 +124,7 @@ impl Font {
         for c in text.chars() {
             match &self.glyphs.get(&c) {
                 Some(g) => {
-                    text_width += g.advance().0;
+                    text_width += g.advance();
                 }
                 None => {
                     text_width += self.width as f32;
