@@ -204,6 +204,10 @@ impl Graphics {
         }
     }
 
+    pub fn font(&self) -> &font::Font {
+        &self.font
+    }
+
     pub fn set_font(&mut self, font: font::Font) {
         self.font = font;
     }
@@ -555,6 +559,10 @@ impl Graphics2D {
                 self.last_draw = t;
             }
         }
+    }
+
+    pub fn font(&self) -> &font::Font {
+        &self.font
     }
 
     pub fn set_font(&mut self, font: font::Font) {
