@@ -157,11 +157,9 @@ impl Font {
         text_width
     }
 
-    //TODO change name to more idiomatic "glyph".
-    //TODO return an option so not to crash the aplication when font fails to find an glyph.
-    pub fn get_glyph(&self, glyph: char) -> &Glyph  {  &self.glyphs.get(&glyph).unwrap()    }
-    pub fn width(&self)                  -> u32     {  self.width                           }
-    pub fn height(&self)                 -> u32     {  self.width*2                         }
+    pub fn glyph(&self, glyph: char)     -> Option<&Glyph>  {  self.glyphs.get(&glyph)   }
+    pub fn width(&self)                  -> u32             {  self.width                }
+    pub fn height(&self)                 -> u32             {  self.width*2              }
     
 }
 

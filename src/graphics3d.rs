@@ -87,7 +87,7 @@ impl Graphics3D {
         Graphics3D {
             has_texture: false,
             texture: texture::TextureRegion::new_invalid(),
-            font:   font::Font::new("res/fonts/arial.ttf", 64),
+            font:   font::Font::new_invalid(),
 
             shape_ren: ShapeBatchRenderer::new(Shader::from_file("res/shaders/graphics/shape3d.glsl"), {
                 let mut vbl = VertexBufferLayout::new();
@@ -255,7 +255,17 @@ impl Graphics3D {
                 continue;
             }
 
-            let glyph = &self.font.get_glyph(c);
+            let glyph = match self.font.glyph(c) {
+                Some(g) => g,
+                None => match self.font.glyph('?') {
+                    Some(g) => g,
+                    None => {
+                        current_advance += self.font.width() as f32 / self.frame_width as f32 / 2.0;
+                        continue;
+                    }
+                },
+            };
+
             let texture = glyph.texture().clone();
             let bearing = glyph.bearing();
             let advance = glyph.advance();

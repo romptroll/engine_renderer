@@ -65,6 +65,7 @@ mod tests {
         renderer::init_gl(&mut win);
 
         let mut gfx = Graphics::new(&mut win);
+        gfx.set_font(Font::new("res/fonts/arial.ttf", 16));
 
         let mut m = 0.0;
 
