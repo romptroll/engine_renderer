@@ -41,12 +41,26 @@ pub mod color;
 
 #[cfg(test)]
 mod tests {
-    use crate::{font::Font, renderer};
+    use renderer::init_gl;
+
+    use crate::{font::Font, renderer, shader::Shader};
     use crate::graphics::*;
     use crate::graphics3d::*;
     use crate::matrix::*;
     use crate::color::*;
 
+
+    #[test]
+    fn shader() {
+        let mut win = engine_core::window::Window::new(10, 10, "").unwrap();
+        init_gl(&mut win);
+
+        let shader = Shader::from_file("res/shaders/graphics/shape.glsl");
+
+        for name in shader.uniform_names() {
+            info_log!("{}", name);
+        }
+    }
 
     #[test]
     fn text_width() {

@@ -34,48 +34,56 @@ pub struct Shader {
 }
 
 impl Shader {
-    
-    pub fn upload_from_name_1i(&self, uniform: &str, v1: i32)							    { self.upload_1i(self.get_uniform_location(uniform), v1); }
-    pub fn upload_from_name_2i(&self, uniform: &str, v1: i32, v2: i32)					    { self.upload_2i(self.get_uniform_location(uniform), v1, v2); }
-    pub fn upload_from_name_3i(&self, uniform: &str, v1: i32, v2: i32, v3: i32)			    { self.upload_3i(self.get_uniform_location(uniform), v1, v2, v3); }
-    pub fn upload_from_name_4i(&self, uniform: &str, v1: i32, v2: i32, v3: i32, v4: i32)	{ self.upload_4i(self.get_uniform_location(uniform), v1, v2, v3, v4); }
-
-    pub fn upload_1i(&self, location: i32, v1: i32) 										{ unsafe { gl_call!(gl::Uniform1i(location, v1)); } }
-    pub fn upload_2i(&self, location: i32, v1: i32, v2: i32) 								{ unsafe { gl_call!(gl::Uniform2i(location, v1, v2)); } }
-    pub fn upload_3i(&self, location: i32, v1: i32, v2: i32, v3: i32) 						{ unsafe { gl_call!(gl::Uniform3i(location, v1, v2, v3)); } }
-    pub fn upload_4i(&self, location: i32, v1: i32, v2: i32, v3: i32, v4: i32) 				{ unsafe { gl_call!(gl::Uniform4i(location, v1, v2, v3, v4)); } }
-
-	pub fn upload_from_name_1f(&self, uniform: &str, v1: f32)                              	{ self.upload_1f(self.get_uniform_location(uniform), v1); }
-	pub fn upload_from_name_2f(&self, uniform: &str, v1: f32, v2: f32)                     	{ self.upload_2f(self.get_uniform_location(uniform), v1, v2); }
-    pub fn upload_from_name_3f(&self, uniform: &str, v1: f32, v2: f32, v3: f32)            	{ self.upload_3f(self.get_uniform_location(uniform), v1, v2, v3); }
-	pub fn upload_from_name_4f(&self, uniform: &str, v1: f32, v2: f32, v3: f32, v4: f32)   	{ self.upload_4f(self.get_uniform_location(uniform), v1, v2, v3, v4); }
-
-    pub fn upload_1f(&self, location: i32, v1: f32)                              			{ unsafe { gl_call!(gl::Uniform1f(location, v1)); } }
-    pub fn upload_2f(&self, location: i32, v1: f32, v2: f32)                     			{ unsafe { gl_call!(gl::Uniform2f(location, v1, v2)); } }
-    pub fn upload_3f(&self, location: i32, v1: f32, v2: f32, v3: f32)            			{ unsafe { gl_call!(gl::Uniform3f(location, v1, v2, v3)); } }
-	pub fn upload_4f(&self, location: i32, v1: f32, v2: f32, v3: f32, v4: f32)   			{ unsafe { gl_call!(gl::Uniform4f(location, v1, v2, v3, v4)); } }
-	
-	pub fn upload_from_name_3x3f(&self, uniform: &str, v: &[f32; 9]) 	{ self.upload_3x3f(self.get_uniform_location(uniform), v) }
-	pub fn upload_from_name_4x4f(&self, uniform: &str, v: &[f32; 16]) 	{ self.upload_4x4f(self.get_uniform_location(uniform), v) }
-
-	pub fn upload_3x3f(&self, location: i32, v: &[f32; 9])  			{ unsafe { gl_call!(gl::UniformMatrix3fv(location, 1, 0 /*FALSE*/, v as *const f32)); } }
-	pub fn upload_4x4f(&self, location: i32, v: &[f32; 16]) 			{ unsafe { gl_call!(gl::UniformMatrix4fv(location, 1, 0 /*FALSE*/, v as *const f32)); } }
-
-    pub fn get_uniform_location(&self, uniform: &str) -> i32 {
+    pub fn from_source(source: &str) -> Shader {
 		unsafe {
-			let location;
-			gl_call!(location = gl::GetUniformLocation(self.gl_buffer_id, std::ffi::CString::new(uniform).unwrap().into_raw() as *const i8));
+			//core::logger::info(source);
+			let shader_sources = Shader::parse(source);
 
-			if location == -1 {
-				error_log!("SHADER UNIFORM : {} DOES NOT EXIST", uniform);
+			//core::logger::info("DONE");
+
+			let mut vs: u32 = 0;
+			let mut fs: u32 = 0;
+			let mut gs: u32 = 0;
+
+			let program;
+			gl_call!(program = gl::CreateProgram());
+
+			if shader_sources[ShaderType::VERTEX as usize] != "" {
+				vs = Shader::compile(&shader_sources[ShaderType::VERTEX as usize], gl::VERTEX_SHADER);
+				gl_call!(gl::AttachShader(program, vs));
 			}
-			location
+
+			if shader_sources[ShaderType::FRAGMENT as usize] != "" {
+				fs = Shader::compile(&shader_sources[ShaderType::FRAGMENT as usize], gl::FRAGMENT_SHADER);
+				gl_call!(gl::AttachShader(program, fs));
+			}
+
+			if shader_sources[ShaderType::GEOMETRY as usize] != "" 	{
+				gs = Shader::compile(&shader_sources[ShaderType::GEOMETRY as usize], gl::GEOMETRY_SHADER);
+				gl_call!(gl::AttachShader(program, gs));
+			}
+			
+			gl_call!(gl::LinkProgram(program));
+			gl_call!(gl::ValidateProgram(program));
+
+			gl_call!(gl::DeleteShader(vs));
+			gl_call!(gl::DeleteShader(fs));
+			gl_call!(gl::DeleteShader(gs));
+			
+			Shader { gl_buffer_id: program }
 		}
 	}
-		
-    pub fn get_type_from_name(&self, uniform: &str)		-> u32 { return self.get_type(self.get_uniform_location(uniform)); }
+   
+	pub fn from_file(file_path: &str) 	-> Shader { Shader::from_source(&Shader::load_file(file_path)) }
+	
+	pub fn from_files(file_paths: std::vec::Vec<&str>) -> Shader {
+		let mut raw_sources = std::string::String::new();
+		for file_path in file_paths {
+			raw_sources.push_str(&Shader::load_file(file_path));
+		}
 
-    pub fn get_type(&self, location: i32)	-> u32 {location as u32}
+		Shader::from_source(&raw_sources)
+	}
 
 	pub fn compile(shader_source: &str, shader_type: u32) -> u32 {
 		unsafe {
@@ -144,56 +152,64 @@ impl Shader {
         contents
 	}
 
-	pub fn from_source(source: &str) -> Shader {
+    pub fn upload_from_name_1i(&self, uniform: &str, v1: i32)							    { self.upload_1i(self.uniform_location(uniform), v1); }
+    pub fn upload_from_name_2i(&self, uniform: &str, v1: i32, v2: i32)					    { self.upload_2i(self.uniform_location(uniform), v1, v2); }
+    pub fn upload_from_name_3i(&self, uniform: &str, v1: i32, v2: i32, v3: i32)			    { self.upload_3i(self.uniform_location(uniform), v1, v2, v3); }
+    pub fn upload_from_name_4i(&self, uniform: &str, v1: i32, v2: i32, v3: i32, v4: i32)	{ self.upload_4i(self.uniform_location(uniform), v1, v2, v3, v4); }
+
+    pub fn upload_1i(&self, location: i32, v1: i32) 										{ unsafe { gl_call!(gl::Uniform1i(location, v1)); } }
+    pub fn upload_2i(&self, location: i32, v1: i32, v2: i32) 								{ unsafe { gl_call!(gl::Uniform2i(location, v1, v2)); } }
+    pub fn upload_3i(&self, location: i32, v1: i32, v2: i32, v3: i32) 						{ unsafe { gl_call!(gl::Uniform3i(location, v1, v2, v3)); } }
+    pub fn upload_4i(&self, location: i32, v1: i32, v2: i32, v3: i32, v4: i32) 				{ unsafe { gl_call!(gl::Uniform4i(location, v1, v2, v3, v4)); } }
+
+	pub fn upload_from_name_1f(&self, uniform: &str, v1: f32)                              	{ self.upload_1f(self.uniform_location(uniform), v1); }
+	pub fn upload_from_name_2f(&self, uniform: &str, v1: f32, v2: f32)                     	{ self.upload_2f(self.uniform_location(uniform), v1, v2); }
+    pub fn upload_from_name_3f(&self, uniform: &str, v1: f32, v2: f32, v3: f32)            	{ self.upload_3f(self.uniform_location(uniform), v1, v2, v3); }
+	pub fn upload_from_name_4f(&self, uniform: &str, v1: f32, v2: f32, v3: f32, v4: f32)   	{ self.upload_4f(self.uniform_location(uniform), v1, v2, v3, v4); }
+
+    pub fn upload_1f(&self, location: i32, v1: f32)                              			{ unsafe { gl_call!(gl::Uniform1f(location, v1)); } }
+    pub fn upload_2f(&self, location: i32, v1: f32, v2: f32)                     			{ unsafe { gl_call!(gl::Uniform2f(location, v1, v2)); } }
+    pub fn upload_3f(&self, location: i32, v1: f32, v2: f32, v3: f32)            			{ unsafe { gl_call!(gl::Uniform3f(location, v1, v2, v3)); } }
+	pub fn upload_4f(&self, location: i32, v1: f32, v2: f32, v3: f32, v4: f32)   			{ unsafe { gl_call!(gl::Uniform4f(location, v1, v2, v3, v4)); } }
+	
+	pub fn upload_from_name_3x3f(&self, uniform: &str, v: &[f32; 9]) 	{ self.upload_3x3f(self.uniform_location(uniform), v) }
+	pub fn upload_from_name_4x4f(&self, uniform: &str, v: &[f32; 16]) 	{ self.upload_4x4f(self.uniform_location(uniform), v) }
+
+	pub fn upload_3x3f(&self, location: i32, v: &[f32; 9])  			{ unsafe { gl_call!(gl::UniformMatrix3fv(location, 1, 0 /*FALSE*/, v as *const f32)); } }
+	pub fn upload_4x4f(&self, location: i32, v: &[f32; 16]) 			{ unsafe { gl_call!(gl::UniformMatrix4fv(location, 1, 0 /*FALSE*/, v as *const f32)); } }
+
+    pub fn uniform_location(&self, uniform: &str) -> i32 {
 		unsafe {
-			//core::logger::info(source);
-			let shader_sources = Shader::parse(source);
+			let location;
+			gl_call!(location = gl::GetUniformLocation(self.gl_buffer_id, std::ffi::CString::new(uniform).unwrap().into_raw() as *const i8));
 
-			//core::logger::info("DONE");
-
-			let mut vs: u32 = 0;
-			let mut fs: u32 = 0;
-			let mut gs: u32 = 0;
-
-			let program;
-			gl_call!(program = gl::CreateProgram());
-
-			if shader_sources[ShaderType::VERTEX as usize] != "" {
-				vs = Shader::compile(&shader_sources[ShaderType::VERTEX as usize], gl::VERTEX_SHADER);
-				gl_call!(gl::AttachShader(program, vs));
+			if location == -1 {
+				error_log!("SHADER UNIFORM : {} DOES NOT EXIST", uniform);
 			}
-
-			if shader_sources[ShaderType::FRAGMENT as usize] != "" {
-				fs = Shader::compile(&shader_sources[ShaderType::FRAGMENT as usize], gl::FRAGMENT_SHADER);
-				gl_call!(gl::AttachShader(program, fs));
-			}
-
-			if shader_sources[ShaderType::GEOMETRY as usize] != "" 	{
-				gs = Shader::compile(&shader_sources[ShaderType::GEOMETRY as usize], gl::GEOMETRY_SHADER);
-				gl_call!(gl::AttachShader(program, gs));
-			}
-			
-			gl_call!(gl::LinkProgram(program));
-			gl_call!(gl::ValidateProgram(program));
-
-			gl_call!(gl::DeleteShader(vs));
-			gl_call!(gl::DeleteShader(fs));
-			gl_call!(gl::DeleteShader(gs));
-			
-			Shader { gl_buffer_id: program }
+			location
 		}
 	}
-   
-	pub fn from_file(file_path: &str) 	-> Shader { Shader::from_source(&Shader::load_file(file_path)) }
-	
-	pub fn from_files(file_paths: std::vec::Vec<&str>) -> Shader {
-		let mut raw_sources = std::string::String::new();
-		for file_path in file_paths {
-			raw_sources.push_str(&Shader::load_file(file_path));
+
+	pub fn uniform_names(&self) -> Vec<String> {
+		unsafe {
+			let mut uniforms = Vec::new();
+			let mut num_uniforms = 0i32;
+			gl_call!(gl::GetProgramiv(self.gl_buffer_id, gl::ACTIVE_UNIFORMS, &mut num_uniforms as *mut i32));
+
+			
+
+			for i in 0..num_uniforms {
+				let mut name = vec![0u8; 256 as usize];
+				let mut length = 0;
+				
+				gl_call!(gl::GetActiveUniform(self.gl_buffer_id, i as u32, 256, &mut length as *mut i32, 0 as *mut i32, 0 as *mut u32, name.as_mut_ptr() as *mut i8));
+
+				uniforms.push(String::from_raw_parts(name.as_mut_ptr(), length as usize, length as usize));
+			}
+
+
+			uniforms
 		}
-
-		Shader::from_source(&raw_sources)
-
 	}
 
 	pub fn bind(&self) 	{ unsafe { gl_call!(gl::UseProgram(self.gl_buffer_id)); }}
