@@ -56,10 +56,9 @@ mod tests {
         init_gl(&mut win);
 
         let shader = Shader::from_file("res/shaders/graphics/shape.glsl");
-        shader.bind();
 
         for name in shader.uniform_names() {
-            info_log!("{}", name);
+            info_log!("[{}]", name);
         }
     }
 

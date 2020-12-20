@@ -211,7 +211,7 @@ impl Shader {
 					name.as_mut_ptr() as *mut i8
 				));
 
-				uniforms.push(String::from_raw_parts(name.as_mut_ptr(), length as usize, length as usize));
+				uniforms.push(String::from_utf8(name).unwrap());
 			}
 
 			uniforms
