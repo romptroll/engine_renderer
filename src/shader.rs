@@ -196,17 +196,23 @@ impl Shader {
 			let mut num_uniforms = 0i32;
 			gl_call!(gl::GetProgramiv(self.gl_buffer_id, gl::ACTIVE_UNIFORMS, &mut num_uniforms as *mut i32));
 
-			
-
 			for i in 0..num_uniforms {
 				let mut name = vec![0u8; 256 as usize];
 				let mut length = 0;
-				
-				gl_call!(gl::GetActiveUniform(self.gl_buffer_id, i as u32, 256, &mut length as *mut i32, 0 as *mut i32, 0 as *mut u32, name.as_mut_ptr() as *mut i8));
+				let mut size = 0;
+				let mut t = 0 as gl::types::GLenum;
+
+				gl_call!(gl::GetActiveUniform(
+					self.gl_buffer_id,
+					i as u32, 256,
+					&mut length as *mut i32,
+					&mut size as *mut i32,
+					&mut t as *mut u32,
+					name.as_mut_ptr() as *mut i8
+				));
 
 				uniforms.push(String::from_raw_parts(name.as_mut_ptr(), length as usize, length as usize));
 			}
-
 
 			uniforms
 		}
