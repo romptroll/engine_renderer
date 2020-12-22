@@ -17,7 +17,11 @@ void main() {
 #pragma optimize (off)
 
 layout(points) in;
+<<<<<<< Updated upstream
 layout(triangle_strip, max_vertices = 10) out;
+=======
+layout(triangle_strip, max_vertices = 64) out;
+>>>>>>> Stashed changes
 
 in int tight_color[];
 

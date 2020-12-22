@@ -23,7 +23,7 @@ void main() {
 #version 330 core
 
 layout(points) in;
-layout(triangle_strip, max_vertices = 256) out;
+layout(triangle_strip, max_vertices = 64) out;
 
 in int tight_color[];
 in mat3 mat[];

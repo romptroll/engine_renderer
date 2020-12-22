@@ -43,7 +43,7 @@ pub mod color;
 mod tests {
     use renderer::init_gl;
 
-    use crate::{font::Font, renderer, shader::Shader};
+    use crate::{font::Font, renderer, shader::Shader, texture::TextureRegion};
     use crate::graphics::*;
     use crate::graphics3d::*;
     use crate::matrix::*;
@@ -78,12 +78,23 @@ mod tests {
     //     win.make_current();
     //     renderer::init_gl(&mut win);
 
+<<<<<<< Updated upstream
     //     let mut gfx = Graphics::new(&mut win);
     //     gfx.set_font(Font::new("res/fonts/arial.ttf", 16));
+=======
+        let mut gfx = Graphics::new(&mut win);
+        gfx.set_font(Font::new("res/fonts/arial.ttf", 100));
+>>>>>>> Stashed changes
 
     //     let mut m = 0.0;
 
+<<<<<<< Updated upstream
     //     while !win.should_close() {
+=======
+        let font_texture = TextureRegion::new_whole(&gfx.font().atlas);
+
+        while !win.should_close() {
+>>>>>>> Stashed changes
 
     //         m += 0.001;
 
@@ -94,6 +105,7 @@ mod tests {
     //             gfx.clear(Color::from(0x00))
     //         }
 
+<<<<<<< Updated upstream
     //         gfx.set_scale(m, m);
     //         gfx.draw_string("Hmmm ja du det ska man undra sig", -0.5, -0.5);
     //         gfx.draw_string("yeet", 0.0, 0.0);
@@ -104,6 +116,21 @@ mod tests {
     //         win.swap_buffers();
     //     }
     // }
+=======
+            //gfx.set_scale(m, m);
+            gfx.draw_string("Hmmm ja du det ska man undra sig", -0.5, -0.5);
+            gfx.draw_string("yeet", 0.0, 0.0);
+
+            gfx.texture(font_texture.clone());
+            gfx.fill_rect(-1.0, -1.0, 2.0, 2.0);
+
+            gfx.update();
+            gfx.flush();
+            win.poll_events();
+            win.swap_buffers();
+        }
+    }
+>>>>>>> Stashed changes
 
     #[test]
     fn cube() {

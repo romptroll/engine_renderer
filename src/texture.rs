@@ -362,7 +362,7 @@ impl Image {
 			crop_height = self.height;
 		}
 
-		let mut resized_image = Image::from_color(width, height, 0x00_00_00_FF);
+		let mut resized_image = Image::from_color(width, height, 0x00_00_00_00);
 		resized_image.draw(0, 0, self.crop(0, 0, crop_width, crop_height));
 
 		self.width  = resized_image.width;
