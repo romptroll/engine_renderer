@@ -452,6 +452,8 @@ impl Graphics {
 
     pub fn set_sprite_shader(&mut self, shader: Shader)     { self.sprite_ren.shader = shader;  }
     pub fn set_shape_shader(&mut self, shader: Shader)      { self.shape_ren.shader = shader;   }
+    pub fn sprite_shader(&mut self) -> &mut Shader { &mut self.sprite_ren.shader }
+    pub fn shape_shader (&mut self) -> &mut Shader { &mut self.shape_ren.shader  }
     
     pub fn frame_width(&self) -> u32  { self.frame_width    }
     pub fn frame_height(&self) -> u32 { self.frame_height   }
@@ -759,6 +761,8 @@ impl Graphics2D {
 
     pub fn set_sprite_shader(&mut self, shader: Shader)     { self.sprite_ren.shader = shader;  }
     pub fn set_shape_shader(&mut self, shader: Shader)      { self.shape_ren.shader = shader;   }
+    pub fn sprite_shader(&mut self) -> &mut Shader { &mut self.sprite_ren.shader }
+    pub fn shape_shader (&mut self) -> &mut Shader { &mut self.shape_ren.shader  }
 
     pub fn frame_width(&self) -> u32  { self.frame_width    }
     pub fn frame_height(&self) -> u32 { self.frame_height   }
