@@ -62,61 +62,40 @@ mod tests {
         }
     }
 
-    // #[test]
-    // fn text_width() {
-    //     let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
-    //     win.make_current();
-    //     renderer::init_gl(&mut win);
+    #[test]
+    fn text_width() {
+        let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
+        win.make_current();
+        renderer::init_gl(&mut win);
 
-    //     let font = Font::new("res/fonts/arial.ttf", 64);
-    //     info_log!("{}", font.text_width("F u k"));
-    // }
+        let font = Font::new("res/fonts/arial.ttf", 64);
+        info_log!("{}", font.text_width("F u k"));
+    }
 
-    // #[test]
-    // fn text() {
-    //     let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
-    //     win.make_current();
-    //     renderer::init_gl(&mut win);
+    #[test]
+    fn text() {
+        let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
+        win.make_current();
+        renderer::init_gl(&mut win);
 
-<<<<<<< Updated upstream
-    //     let mut gfx = Graphics::new(&mut win);
-    //     gfx.set_font(Font::new("res/fonts/arial.ttf", 16));
-=======
         let mut gfx = Graphics::new(&mut win);
         gfx.set_font(Font::new("res/fonts/arial.ttf", 100));
->>>>>>> Stashed changes
 
-    //     let mut m = 0.0;
+        let mut m = 0.0;
 
-<<<<<<< Updated upstream
-    //     while !win.should_close() {
-=======
         let font_texture = TextureRegion::new_whole(&gfx.font().atlas);
 
         while !win.should_close() {
->>>>>>> Stashed changes
 
-    //         m += 0.001;
+            m += 0.001;
 
-    //         //gfx.clear_rgba8888(0x00_00_00_FF);
+            //gfx.clear_rgba8888(0x00_00_00_FF);
 
-    //         if m >= 2.0 {
-    //             m -= 2.0;
-    //             gfx.clear(Color::from(0x00))
-    //         }
+            if m >= 2.0 {
+                m -= 2.0;
+                gfx.clear(Color::from(0x00))
+            }
 
-<<<<<<< Updated upstream
-    //         gfx.set_scale(m, m);
-    //         gfx.draw_string("Hmmm ja du det ska man undra sig", -0.5, -0.5);
-    //         gfx.draw_string("yeet", 0.0, 0.0);
-
-    //         gfx.update();
-    //         gfx.flush();
-    //         win.poll_events();
-    //         win.swap_buffers();
-    //     }
-    // }
-=======
             //gfx.set_scale(m, m);
             gfx.draw_string("Hmmm ja du det ska man undra sig", -0.5, -0.5);
             gfx.draw_string("yeet", 0.0, 0.0);
@@ -130,7 +109,6 @@ mod tests {
             win.swap_buffers();
         }
     }
->>>>>>> Stashed changes
 
     #[test]
     fn cube() {
