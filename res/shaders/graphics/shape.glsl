@@ -1,5 +1,6 @@
 #shader vertex
 #version 330 core
+#pragma optimize (off)
 
 layout(location = 0) in vec4 v_bounds;
 layout(location = 1) in int v_color;
@@ -13,9 +14,10 @@ void main() {
 
 #shader geometry
 #version 330 core
+#pragma optimize (off)
 
 layout(points) in;
-layout(triangle_strip, max_vertices = 256) out;
+layout(triangle_strip, max_vertices = 10) out;
 
 in int tight_color[];
 
@@ -151,11 +153,10 @@ void main() {
 
 #shader fragment
 #version 330 core
+#pragma optimize (off)
 
 in vec4 color;
 
-layout(location = 0) out vec4 out_color;
-
 void main() {
-	out_color = color;
+	gl_FragColor = color;
 }
