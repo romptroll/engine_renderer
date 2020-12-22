@@ -256,8 +256,8 @@ impl Graphics {
         self.dw.scale = (x, y);
     }
 
-    pub fn translation  (&mut self) -> (f32, f32) { self.dw.translation }
-    pub fn scaling      (&mut self) -> (f32, f32) { self.dw.scale       }
+    pub fn translation  (&self) -> (f32, f32) { self.dw.translation }
+    pub fn scaling      (&self) -> (f32, f32) { self.dw.scale       }
 
     pub fn draw_line(&mut self, x1: f32, y1: f32, x2: f32, y2: f32) {
         let x1 = x1 * self.dw.scale.0 + self.dw.translation.0;
