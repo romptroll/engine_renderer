@@ -62,48 +62,48 @@ mod tests {
         }
     }
 
-    #[test]
-    fn text_width() {
-        let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
-        win.make_current();
-        renderer::init_gl(&mut win);
+    // #[test]
+    // fn text_width() {
+    //     let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
+    //     win.make_current();
+    //     renderer::init_gl(&mut win);
 
-        let font = Font::new("res/fonts/arial.ttf", 64);
-        info_log!("{}", font.text_width("F u k"));
-    }
+    //     let font = Font::new("res/fonts/arial.ttf", 64);
+    //     info_log!("{}", font.text_width("F u k"));
+    // }
 
-    #[test]
-    fn text() {
-        let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
-        win.make_current();
-        renderer::init_gl(&mut win);
+    // #[test]
+    // fn text() {
+    //     let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
+    //     win.make_current();
+    //     renderer::init_gl(&mut win);
 
-        let mut gfx = Graphics::new(&mut win);
-        gfx.set_font(Font::new("res/fonts/arial.ttf", 16));
+    //     let mut gfx = Graphics::new(&mut win);
+    //     gfx.set_font(Font::new("res/fonts/arial.ttf", 16));
 
-        let mut m = 0.0;
+    //     let mut m = 0.0;
 
-        while !win.should_close() {
+    //     while !win.should_close() {
 
-            m += 0.001;
+    //         m += 0.001;
 
-            //gfx.clear_rgba8888(0x00_00_00_FF);
+    //         //gfx.clear_rgba8888(0x00_00_00_FF);
 
-            if m >= 2.0 {
-                m -= 2.0;
-                gfx.clear(Color::from(0x00))
-            }
+    //         if m >= 2.0 {
+    //             m -= 2.0;
+    //             gfx.clear(Color::from(0x00))
+    //         }
 
-            gfx.set_scale(m, m);
-            gfx.draw_string("Hmmm ja du det ska man undra sig", -0.5, -0.5);
-            gfx.draw_string("yeet", 0.0, 0.0);
+    //         gfx.set_scale(m, m);
+    //         gfx.draw_string("Hmmm ja du det ska man undra sig", -0.5, -0.5);
+    //         gfx.draw_string("yeet", 0.0, 0.0);
 
-            gfx.update();
-            gfx.flush();
-            win.poll_events();
-            win.swap_buffers();
-        }
-    }
+    //         gfx.update();
+    //         gfx.flush();
+    //         win.poll_events();
+    //         win.swap_buffers();
+    //     }
+    // }
 
     #[test]
     fn cube() {
@@ -112,6 +112,9 @@ mod tests {
         renderer::init_gl(&mut win);
 
         let mut gfx = Graphics3D::new(&mut win);
+        
+        // gfx.set_shape_shader(Shader::from_file("res/shaders/graphics/shape.glsl"));
+
         let mut m = 0.0;
 
         unsafe { renderer::std_renderer::enable(renderer::std_renderer::Capability::DepthTest); }
