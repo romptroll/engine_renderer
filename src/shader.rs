@@ -171,6 +171,16 @@ impl Shader {
     pub fn upload_2f(&self, location: i32, v1: f32, v2: f32)                     			{ unsafe { gl_call!(gl::Uniform2f(location, v1, v2)); } }
     pub fn upload_3f(&self, location: i32, v1: f32, v2: f32, v3: f32)            			{ unsafe { gl_call!(gl::Uniform3f(location, v1, v2, v3)); } }
 	pub fn upload_4f(&self, location: i32, v1: f32, v2: f32, v3: f32, v4: f32)   			{ unsafe { gl_call!(gl::Uniform4f(location, v1, v2, v3, v4)); } }
+
+	pub fn upload_from_name_1d(&self, uniform: &str, v1: f64)                              	{ self.upload_1d(self.uniform_location(uniform), v1); }
+	pub fn upload_from_name_2d(&self, uniform: &str, v1: f64, v2: f64)                     	{ self.upload_2d(self.uniform_location(uniform), v1, v2); }
+    pub fn upload_from_name_3d(&self, uniform: &str, v1: f64, v2: f64, v3: f64)            	{ self.upload_3d(self.uniform_location(uniform), v1, v2, v3); }
+	pub fn upload_from_name_4d(&self, uniform: &str, v1: f64, v2: f64, v3: f64, v4: f64)   	{ self.upload_4d(self.uniform_location(uniform), v1, v2, v3, v4); }
+
+    pub fn upload_1d(&self, location: i32, v1: f64)                              			{ unsafe { gl_call!(gl::Uniform1d(location, v1)); } }
+    pub fn upload_2d(&self, location: i32, v1: f64, v2: f64)                     			{ unsafe { gl_call!(gl::Uniform2d(location, v1, v2)); } }
+    pub fn upload_3d(&self, location: i32, v1: f64, v2: f64, v3: f64)            			{ unsafe { gl_call!(gl::Uniform3d(location, v1, v2, v3)); } }
+	pub fn upload_4d(&self, location: i32, v1: f64, v2: f64, v3: f64, v4: f64)   			{ unsafe { gl_call!(gl::Uniform4d(location, v1, v2, v3, v4)); } }
 	
 	pub fn upload_from_name_3x3f(&self, uniform: &str, v: &[f32; 9]) 	{ self.upload_3x3f(self.uniform_location(uniform), v) }
 	pub fn upload_from_name_4x4f(&self, uniform: &str, v: &[f32; 16]) 	{ self.upload_4x4f(self.uniform_location(uniform), v) }
