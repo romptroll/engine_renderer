@@ -23,7 +23,7 @@
 
 use crate::texture;
 use freetype::Library;
-
+ 
 pub struct Font {
     pub atlas: std::rc::Rc::<texture::Texture>,
     glyphs: std::collections::HashMap::<char, Glyph>,
@@ -56,24 +56,24 @@ impl Font {
         let mut image_pack = texture::ImagePack::new();
 
         for i in 33..127 {
-			face.load_char(i as usize as usize, freetype::face::LoadFlag::RENDER).unwrap();
+            face.load_char(i as usize as usize, freetype::face::LoadFlag::RENDER).unwrap();
             // Get the glyph instance
             let glyph = face.glyph();
             let bitmap = glyph.bitmap();
-			
-			let width = bitmap.width();
-			let height = bitmap.rows();
+            
+            let width = bitmap.width();
+            let height = bitmap.rows();
 
-			let bearing_x = glyph.bitmap_left() as f32;
+            let bearing_x = glyph.bitmap_left() as f32;
             let bearing_y = glyph.bitmap_top() as f32;
 
-			let advance = (glyph.advance().x >> 6) as f32;
+            let advance = (glyph.advance().x >> 6) as f32;
 
-			let mut bitmap_converted = texture::Image::from_color(width as u32, height as u32, 0x00_00_00_00);
+            let mut bitmap_converted = texture::Image::from_color(width as u32, height as u32, 0x00_00_00_00);
 
-			for x in 0..width {
-				for y in 0..height {
-					let pixel = bitmap.buffer()[(x + y * width) as usize];
+            for x in 0..width {
+                for y in 0..height {
+                    let pixel = bitmap.buffer()[(x + y * width) as usize];
                     bitmap_converted.set_r8(x as u32, (height - y - 1) as u32, pixel);
                     bitmap_converted.set_g8(x as u32, (height - y - 1) as u32, pixel);
                     bitmap_converted.set_b8(x as u32, (height - y - 1) as u32, pixel);
@@ -120,6 +120,10 @@ impl Font {
     pub fn text_width(&self, text: &str) -> f32 {
         let mut text_width = 0.0;
 
+        let no_glyph_advance = match self.glyphs.get('?') {
+            Some(g) => g.advance,
+            None => self.width as f32,
+        };
 
         for (i, c) in text.chars().enumerate() {
 
@@ -129,7 +133,7 @@ impl Font {
                         text_width += g.size().0 + g.bearing().0;
                     }
                     None => {
-                        text_width += self.width as f32;
+                        text_width += no_glyph_advance;
                     }
                 }
             } else if i == text.len() - 1 {
@@ -138,7 +142,7 @@ impl Font {
                         text_width += g.advance() - g.bearing().0;
                     }
                     None => {
-                        text_width += self.width as f32;
+                        text_width += no_glyph_advance;
                     }
                 }
             } else {
@@ -147,7 +151,7 @@ impl Font {
                         text_width += g.advance();
                     }
                     None => {
-                        text_width += self.width as f32;
+                        text_width += no_glyph_advance;
                     }
                 }
             }
