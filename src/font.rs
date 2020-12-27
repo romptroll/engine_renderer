@@ -120,7 +120,7 @@ impl Font {
     pub fn text_width(&self, text: &str) -> f32 {
         let mut text_width = 0.0;
 
-        let no_glyph_advance = match self.glyphs.get('?') {
+        let no_glyph_advance = match self.glyph('?') {
             Some(g) => g.advance,
             None => self.width as f32,
         };
@@ -128,7 +128,7 @@ impl Font {
         for (i, c) in text.chars().enumerate() {
 
             if i == 0 {
-                match self.glyphs.get(&c) {
+                match self.glyph(c) {
                     Some(g) => {
                         text_width += g.size().0 + g.bearing().0;
                     }
@@ -137,7 +137,7 @@ impl Font {
                     }
                 }
             } else if i == text.len() - 1 {
-                match &self.glyphs.get(&c) {
+                match &self.glyph(c) {
                     Some(g) => {
                         text_width += g.advance() - g.bearing().0;
                     }
@@ -146,7 +146,7 @@ impl Font {
                     }
                 }
             } else {
-                match &self.glyphs.get(&c) {
+                match &self.glyph(c) {
                     Some(g) => {
                         text_width += g.advance();
                     }
