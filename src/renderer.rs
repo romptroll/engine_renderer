@@ -161,7 +161,7 @@ pub mod graphics_renderer {
     }
 }
 
-use engine_core::window;
+use engine_core::{error_log, fatal_log, window};
 
 pub fn flush() {
     unsafe { gl_call!(gl::Flush()); }
@@ -169,7 +169,7 @@ pub fn flush() {
 
 pub fn init_gl(window: &mut window::Window) {
     if gl_loader::init_gl() == 0 {
-        crate::log::fatal("Failed to load the opengl library!!!");
+        fatal_log!("Failed to load the opengl library!!!");
     }
     gl::load_with(|s| window.glfw_window.get_proc_address(s));
 }
@@ -197,7 +197,7 @@ pub fn gl_log_call(file: &str, line: u32) -> bool {
                 _      => error_string = "Invalid GL error!"
             }
             
-            crate::log::error(&format!("[OpenGL] {} {} : line {}", error_string, file, line));
+            error_log!("[OpenGL] {} {} : line {}", error_string, file, line);
             error_free = false;
         }
         return error_free;    

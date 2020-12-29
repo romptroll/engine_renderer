@@ -30,7 +30,7 @@ use crate::font;
 use crate::matrix;
 use crate::color::*;
 
-use engine_core::window;
+use engine_core::{error_log, window};
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum LastDraw {

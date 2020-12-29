@@ -24,6 +24,8 @@
 use std::io::prelude::*;
 use std::fs::File;
 
+use engine_core::error_log;
+
 #[derive(Copy, Clone)]
 enum ShaderType {
     NONE = -1, VERTEX = 0, FRAGMENT = 1, GEOMETRY = 2

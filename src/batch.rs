@@ -21,6 +21,7 @@
  *   SOFTWARE.
  */
 
+use engine_core::error_log;
 use crate::buffer;
 
 pub struct Batch {

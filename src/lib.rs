@@ -25,7 +25,6 @@
 
 #[macro_use]
 pub mod macros;
-pub mod log;
 pub mod batch;
 pub mod buffer;
 pub mod font;
@@ -49,6 +48,7 @@ mod tests {
     use crate::matrix::*;
     use crate::color::*;
 
+    use engine_core::info_log;
 
     #[test]
     fn shader() {

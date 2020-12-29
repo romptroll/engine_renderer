@@ -22,6 +22,7 @@
  */
 use std::rc::Rc;
 
+use engine_core::error_log;
 use image::GenericImageView;
 
 pub struct Texture {

@@ -31,35 +31,3 @@ macro_rules! gl_call  {
         }
     };
 }
-
-#[macro_export]
-macro_rules! info_log {
-    () => (crate::log::info(&format!("[File] {} [Line] {}", file!(), line!())));
-    ($($arg:tt)*) => ({
-        crate::log::info(&format!("[File] {} [Line] {} [Message] {}", file!(), line!(), format!($($arg)*)));
-    })
-}
-
-#[macro_export]
-macro_rules! warn_log {
-    () => (crate::log::warn(&format!("[File] {} [Line] {}", file!(), line!())));
-    ($($arg:tt)*) => ({
-        crate::log::warn(&format!("[File] {} [Line] {} [Message] {}", file!(), line!(), format!($($arg)*)));
-    })
-}
-
-#[macro_export]
-macro_rules! error_log {
-    () => (crate::log::error(&format!("[File] {} [Line] {}", file!(), line!())));
-    ($($arg:tt)*) => ({
-        crate::log::error(&format!("[File] {} [Line] {} [Message] {}", file!(), line!(), format!($($arg)*)));
-    })
-}
- 
-#[macro_export]
-macro_rules! fatal_log {
-    () => (crate::log::fatal(&format!("[File] {} [Line] {}", file!(), line!())));
-    ($($arg:tt)*) => ({
-        crate::log::fatal(&format!("[File] {} [Line] {} [Message] {}", file!(), line!(), format!($($arg)*)));
-    })
-}
