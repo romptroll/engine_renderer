@@ -340,8 +340,8 @@ impl Image {
 	}
 
 	pub fn to_file(&self, path: &str) {
-		let mut buff = self.buffer.clone();
-		buff.reverse();
+		let img = self.flip_horizontally();
+		let buff = img.buffer;
 		save_buffer(path, &buff, self.width, self.height, image::ColorType::Rgba8).unwrap();
 	}
 
@@ -387,6 +387,19 @@ impl Image {
 				self.buffer[(((x+i) + (y+j) * self.width) * 4 + 3) as usize] = image.buffer[((i + j * image.width) * 4 + 3) as usize];
 			}
 		}
+	}
+
+	pub fn flip_horizontally(&self) -> Image {
+		let mut buff = Vec::with_capacity((self.width*self.height*4) as usize);
+
+		for i in 0..(self.width*self.height) as usize {
+			buff.push(self.buffer[self.buffer.len()-1-i*4-3]);
+			buff.push(self.buffer[self.buffer.len()-1-i*4-2]);
+			buff.push(self.buffer[self.buffer.len()-1-i*4-1]);
+			buff.push(self.buffer[self.buffer.len()-1-i*4-0]);
+		}
+
+		Image::new(self.width, self.height, buff)
 	}
 
 	pub fn get_rgba8(&self, x: u32, y: u32) -> u32 {
