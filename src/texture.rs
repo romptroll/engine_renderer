@@ -23,7 +23,7 @@
 use std::rc::Rc;
 
 use engine_core::error_log;
-use image::GenericImageView;
+use image::{GenericImageView, save_buffer};
 
 pub struct Texture {
     gl_texture_id : u32,
@@ -337,6 +337,10 @@ impl Image {
 			pixels[i*4+3] 	= 	((color & 0x00_00_00_FF) >> 0) 		as u8;
 		}
 		Image::new(width, height, pixels)
+	}
+
+	pub fn to_file(&self, path: &str) {
+		save_buffer(path, &self.buffer, self.width, self.height, image::ColorType::Rgba8).unwrap();
 	}
 
 	pub fn crop(&self, x: u32, y: u32, width: u32, height: u32) -> Image {
