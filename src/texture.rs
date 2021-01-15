@@ -340,7 +340,9 @@ impl Image {
 	}
 
 	pub fn to_file(&self, path: &str) {
-		save_buffer(path, &self.buffer, self.width, self.height, image::ColorType::Rgba8).unwrap();
+		let mut buff = self.buffer.clone();
+		buff.reverse();
+		save_buffer(path, &buff, self.width, self.height, image::ColorType::Rgba8).unwrap();
 	}
 
 	pub fn crop(&self, x: u32, y: u32, width: u32, height: u32) -> Image {
