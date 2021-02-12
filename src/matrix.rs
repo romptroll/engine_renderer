@@ -25,7 +25,8 @@ use crate::vector::*;
 
 pub union Mat3x3f {
     pub m: [[f32; 3]; 3],
-    pub values: [f32; 3*3]
+    pub values: [f32; 3*3],
+    pub vecs: [Vec3f; 3],
 }
 
 impl Mat3x3f {
@@ -86,6 +87,16 @@ impl Mat3x3f {
             }
 
             new_matrix
+        }
+    }
+
+    pub fn mult_vec(lhs: &Mat3x3f, rhs: &Vec3f) -> Vec3f {
+        unsafe {
+            let mut res = Vec3f::new(0.0, 0.0, 0.0);
+            res.x = (Vec3f::mult(&lhs.vecs[0], rhs)).sum();
+            res.y = (Vec3f::mult(&lhs.vecs[1], rhs)).sum();
+            res.z = (Vec3f::mult(&lhs.vecs[2], rhs)).sum();
+            res
         }
     }
 }

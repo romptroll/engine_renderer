@@ -21,31 +21,58 @@
  *   SOFTWARE.
  */
 
-#[derive(Copy, Clone)]
-pub struct Vec4f {
+ #[derive(Copy, Clone)]
+ pub struct Vec4f {
+     pub x: f32,
+     pub y: f32,
+     pub z: f32,
+     pub w: f32,
+ }
+ 
+ impl Vec4f {
+     pub fn new(x: f32, y: f32, z: f32, w: f32) -> Vec4f {
+         Vec4f {
+             x, y, z, w
+         }
+     }
+ 
+     pub fn mult(lhs: &Vec4f, rhs: &Vec4f) -> Vec4f {
+         Vec4f::new(
+             lhs.x * rhs.x, 
+             lhs.y * rhs.y,
+             lhs.z * rhs.z, 
+             lhs.w * rhs.w
+         )
+     }
+ 
+     pub fn sum(&self) -> f32 {
+         self.x + self.y + self.z + self.w
+     } 
+ }
+
+ #[derive(Copy, Clone)]
+pub struct Vec3f {
     pub x: f32,
     pub y: f32,
     pub z: f32,
-    pub w: f32,
 }
 
-impl Vec4f {
-    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Vec4f {
-        Vec4f {
-            x, y, z, w
+impl Vec3f {
+    pub fn new(x: f32, y: f32, z: f32) -> Vec3f {
+        Vec3f {
+            x, y, z
         }
     }
 
-    pub fn mult(lhs: &Vec4f, rhs: &Vec4f) -> Vec4f {
-        Vec4f::new(
+    pub fn mult(lhs: &Vec3f, rhs: &Vec3f) -> Vec3f {
+        Vec3f::new(
             lhs.x * rhs.x, 
             lhs.y * rhs.y,
             lhs.z * rhs.z, 
-            lhs.w * rhs.w
         )
     }
 
     pub fn sum(&self) -> f32 {
-        self.x + self.y + self.z + self.w
+        self.x + self.y + self.z
     } 
 }
