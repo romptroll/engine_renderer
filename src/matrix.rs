@@ -26,7 +26,7 @@ use crate::vector::*;
 pub union Mat3x3f {
     pub m: [[f32; 3]; 3],
     pub values: [f32; 3*3],
-    pub vecs: [Vec3f; 3],
+    pub rows: [Vec3f; 3],
 }
 
 impl Mat3x3f {
@@ -93,9 +93,9 @@ impl Mat3x3f {
     pub fn mult_vec(lhs: &Mat3x3f, rhs: &Vec3f) -> Vec3f {
         unsafe {
             let mut res = Vec3f::new(0.0, 0.0, 0.0);
-            res.x = (Vec3f::mult(&lhs.vecs[0], rhs)).sum();
-            res.y = (Vec3f::mult(&lhs.vecs[1], rhs)).sum();
-            res.z = (Vec3f::mult(&lhs.vecs[2], rhs)).sum();
+            res.x = (Vec3f::mult(&lhs.rows[0], rhs)).sum();
+            res.y = (Vec3f::mult(&lhs.rows[1], rhs)).sum();
+            res.z = (Vec3f::mult(&lhs.rows[2], rhs)).sum();
             res
         }
     }
@@ -104,7 +104,7 @@ impl Mat3x3f {
 pub union Mat4x4f {
     pub m: [[f32; 4]; 4],
     pub values: [f32; 4*4],
-    pub vecs: [Vec4f; 4],
+    pub rows: [Vec4f; 4],
 }
 
 impl Mat4x4f {
@@ -196,10 +196,10 @@ impl Mat4x4f {
     pub fn mult_vec(lhs: &Mat4x4f, rhs: &Vec4f) -> Vec4f {
         unsafe {
             let mut res = Vec4f::new(0.0, 0.0, 0.0, 0.0);
-            res.x = (Vec4f::mult(&lhs.vecs[0], rhs)).sum();
-            res.y = (Vec4f::mult(&lhs.vecs[1], rhs)).sum();
-            res.z = (Vec4f::mult(&lhs.vecs[2], rhs)).sum();
-            res.w = (Vec4f::mult(&lhs.vecs[3], rhs)).sum();
+            res.x = (Vec4f::mult(&lhs.rows[0], rhs)).sum();
+            res.y = (Vec4f::mult(&lhs.rows[1], rhs)).sum();
+            res.z = (Vec4f::mult(&lhs.rows[2], rhs)).sum();
+            res.w = (Vec4f::mult(&lhs.rows[3], rhs)).sum();
             res
         }
     }

@@ -42,7 +42,7 @@ pub mod color;
 mod tests {
     use renderer::init_gl;
 
-    use crate::{font::Font, renderer, shader::Shader, texture::TextureRegion};
+    use crate::{color, font::Font, renderer, shader::Shader, texture::TextureRegion, vector::Vec3f};
     use crate::graphics::*;
     use crate::graphics3d::*;
     use crate::matrix::*;
@@ -143,6 +143,46 @@ mod tests {
 
             gfx.set_color(Color::from((m%1.0, 1.0-m%1.0, 0.0, 1.0)));
             gfx.fill_cube(0.0, 0.0, 0.0, 0.8, 0.8, 0.8,  &mvp);
+
+            gfx.update();
+            gfx.flush();
+            win.poll_events();
+            win.swap_buffers();
+        }
+    }
+
+    #[test]
+    fn gfx2d() {
+        let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
+        win.make_current();
+        renderer::init_gl(&mut win);
+
+        let mut gfx = Graphics2D::new(&mut win);
+        let mut i = 0.0;
+        
+        while !win.should_close() {
+            i += 0.001;
+
+            gfx.clear(Color::from(0x00_00_00_FF));
+
+            let mat = Mat3x3f::translation(-0.5, 0.0);
+            let mat = Mat3x3f::mult(&Mat3x3f::rotation(i), &mat);
+            let mut corners = vec![
+                Vec3f::new(0.0, 0.0, 1.0),
+                Vec3f::new(1.0, 0.0, 1.0),
+                Vec3f::new(0.0, 1.0, 1.0),
+                Vec3f::new(1.0, 1.0, 1.0),
+            ];
+            
+            gfx.set_color(color::RED);
+            gfx.fill_rect(0.0, 0.0, 1.0, 1.0, &mat);
+            
+            for c in &mut corners {
+                *c = Mat3x3f::mult_vec(&mat, c);
+                gfx.set_color(color::BLUE);
+                gfx.fill_rect(c.x, c.y, 0.05, 0.05, &Mat3x3f::identity());
+            }
+            
 
             gfx.update();
             gfx.flush();
