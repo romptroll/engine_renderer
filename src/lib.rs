@@ -40,9 +40,11 @@ pub mod color;
 
 #[cfg(test)]
 mod tests {
+    use std::time::SystemTime;
+
     use renderer::init_gl;
 
-    use crate::{color, font::Font, renderer, shader::Shader, texture::TextureRegion, vector::Vec3f};
+    use crate::{color, font::Font, renderer, shader::Shader, texture::{Texture, TextureRegion}, vector::Vec3f};
     use crate::graphics::*;
     use crate::graphics3d::*;
     use crate::matrix::*;
@@ -117,7 +119,11 @@ mod tests {
         renderer::init_gl(&mut win);
 
         let mut gfx = Graphics3D::new(&mut win);
-        
+        //let font = Font::new("res/fonts/arial.ttf", 100);
+        //let tex = TextureRegion::new_whole(&gfx.font().atlas);
+        let tex = Texture::from_file("res/textures/test.png");
+        let tex = TextureRegion::new_whole(&tex);
+        gfx.texture(tex);
         // gfx.set_shape_shader(Shader::from_file("res/shaders/graphics/shape.glsl"));
 
         let mut m = 0.0;
@@ -130,11 +136,21 @@ mod tests {
         let fov_rad = 1.0 / (fov * 0.5 / 180.0 * std::f32::consts::PI).tan();
 
         let projection = Mat4x4f::projection(aspect_ratio, fov_rad, 100.0, 0.1);
-        
+
+        let mut time = SystemTime::now();
+        let mut counter = 0;
 
         while !win.should_close() {
+            counter += 1;
+
+            if time.elapsed().unwrap().as_millis() >= 1000 {
+                println!("fps: {}", counter);
+                time = SystemTime::now();
+                counter = 0;
+            }
+
             let model = Mat4x4f::mult(&Mat4x4f::rotation_y(m), &Mat4x4f::rotation_x(1.0));
-            let model = Mat4x4f::mult(&Mat4x4f::translation(0.0, 0.0, 2.0), &model);
+            let model = Mat4x4f::mult(&Mat4x4f::translation(0.0, m * 10.0, 2.0), &model);
             let mvp = Mat4x4f::mult(&projection, &model);
             m += 0.001;
 
@@ -142,7 +158,13 @@ mod tests {
             gfx.clear(Color::from(0x00_00_00_FF));
 
             gfx.set_color(Color::from((m%1.0, 1.0-m%1.0, 0.0, 1.0)));
-            gfx.fill_cube(0.0, 0.0, 0.0, 0.8, 0.8, 0.8,  &mvp);
+            for i in 0..10 {
+                for j in 0..10 {
+                    for l in 0..10 {
+                        gfx.fill_cube(1.0 * i as f32, 1.0 * j as f32, 1.0 * l as f32, 0.8, 0.8, 0.8,  &mvp);
+                    }
+                }
+            }
 
             gfx.update();
             gfx.flush();
