@@ -102,12 +102,14 @@ impl Graphics3D {
             }),
             sprite_ren: SpriteBatchRenderer::new(Shader::from_file("res/shaders/graphics/sprite3d.glsl"), {
                 let mut vbl = VertexBufferLayout::new();
+                vbl.push_f32(3);
+                vbl.push_f32(3);
+                vbl.push_f32(4);
+                vbl.push_f32(1);
                 vbl.push_f32(4);
                 vbl.push_f32(4);
-                vbl.push_f32(1); //TODO FIX CORRECT!
-                vbl.push_f32(3);
-                vbl.push_f32(3);
-                vbl.push_f32(3);
+                vbl.push_f32(4);
+                vbl.push_f32(4);
                 vbl
             }),
             
@@ -158,9 +160,29 @@ impl Graphics3D {
                 self.shape_ren.shader.upload_from_name_1i("u_primitive", 3);
                 self.shape_ren.flush();
             },
+            LastDraw::SpritePlane => {
+                self.sprite_ren.shader.bind();
+                self.sprite_ren.shader.upload_from_name_1i("u_primitive", 0);
+                self.sprite_ren.flush();
+            },
+            LastDraw::SpriteLine => {
+                self.sprite_ren.shader.bind();
+                self.sprite_ren.shader.upload_from_name_1i("u_primitive", 1);
+                self.sprite_ren.flush();
+            },
+            LastDraw::SpriteSphere => {
+                self.sprite_ren.shader.bind();
+                self.sprite_ren.shader.upload_from_name_1i("u_primitive", 2);
+                self.sprite_ren.flush();
+            },
+            LastDraw::SpriteCube => {
+                self.sprite_ren.shader.bind();
+                self.sprite_ren.shader.upload_from_name_1i("u_primitive", 3);
+                self.sprite_ren.flush();
+            },
             LastDraw::None => {}
             _ => {
-                self.sprite_ren.flush(); //TODO FIX FOR ALL TEXTURED OBJECTS
+                //self.sprite_ren.flush(); //TODO FIX FOR ALL TEXTURED OBJECTS
             },
         }
         
@@ -343,11 +365,12 @@ impl Graphics3D {
             f32::from(self.dw.color),
         );
 
-        unsafe { vertices.extend(mat.values.iter()); }
+        //unsafe { vertices.extend(mat.values.iter()); }
 
 
         self.should_flush(LastDraw::SpriteCube);
-        self.sprite_ren.add_vertex_data(&vertices)
+        self.sprite_ren.add_vertex_data(&vertices);
+        self.sprite_ren.add_vertex_data(unsafe { &mat.values });
     }
 
     fn fill_cube_no_texture(&mut self, x: f32, y: f32, z: f32, width: f32, height: f32, depth: f32, mat: &matrix::Mat4x4f) {
