@@ -37,18 +37,21 @@ pub mod matrix;
 pub mod vector;
 pub mod graphics3d;
 pub mod color;
+pub mod framebuffer;
 
 #[cfg(test)]
 mod tests {
+    use std::ops::Mul;
+
     use renderer::init_gl;
 
-    use crate::{color, font::Font, renderer, shader::Shader, texture::TextureRegion, vector::Vec3f};
+    use crate::{color, font::Font, framebuffer::FrameBuffer, renderer, shader::Shader, texture::{Image, TextureRegion}, vector::Vec3f};
     use crate::graphics::*;
     use crate::graphics3d::*;
     use crate::matrix::*;
     use crate::color::*;
 
-    use engine_core::info_log;
+    use engine_core::{info_log, log::info};
 
     #[test]
     fn shader() {
@@ -178,11 +181,58 @@ mod tests {
             gfx.fill_rect(0.0, 0.0, 1.0, 1.0, &mat);
             
             for c in &mut corners {
-                *c = Mat3x3f::mult_vec(&mat, c);
+                *c = Mat3x3f::mult_vec(&mat, *c);
                 gfx.set_color(color::BLUE);
                 gfx.fill_rect(c.x, c.y, 0.05, 0.05, &Mat3x3f::identity());
             }
             
+
+            gfx.update();
+            gfx.flush();
+            win.poll_events();
+            win.swap_buffers();
+        }
+    }
+
+    #[test]
+    fn framebuffer() {
+        let mut win = engine_core::window::Window::new(600, 400, "Graphics").unwrap();
+        win.make_current();
+        renderer::init_gl(&mut win);
+
+        let mut gfx = Graphics::new(&mut win);
+
+        let mut fb = FrameBuffer::new(win.get_width() as u32, win.get_height() as u32);
+        fb.bind();
+        info_log!("d");
+        //gfx.clear(color::ORANGE);
+        //&gfx.texture(TextureRegion::new_invalid());
+        gfx.set_color(color::BLUE);
+        gfx.fill_ellipse(-1.0, -1.0, 1.0, 1.0);
+        //gfx.fill_rect(-1.0, -1.0, 0.5, 1.0);
+        gfx.flush();
+
+        Image::from_framebuffer(&fb).to_file("res/textures/kuk.png");
+
+        let mut i = 0;
+        FrameBuffer::un_bind();
+        while !win.should_close() {
+            
+            //fb.bind();
+            gfx.texture(TextureRegion::new_invalid());
+            gfx.set_color(color::WHITE);
+            gfx.fill_rect(-1.0, -1.0, 0.5, 0.5);
+            gfx.flush();
+            Image::new(600, 400, FrameBuffer::get_pixels_standard_frame_buffer(0, 0, 600, 400)).to_file(&format!("res/textures/kuk{}.png", i));
+            FrameBuffer::un_bind();
+            i += 1;
+
+
+            //gfx.texture(TextureRegion::new_whole(fb.texture()));
+
+            /*gfx.texture(TextureRegion::new_invalid());
+            gfx.set_color(color::WHITE);
+            gfx.fill_rect(0.0, 0.0, 1.0, 1.0);*/
 
             gfx.update();
             gfx.flush();

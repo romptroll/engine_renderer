@@ -26,8 +26,6 @@ macro_rules! gl_call  {
     ($x:expr) => {
         crate::renderer::gl_clear_error();
         $x;
-        if crate::renderer::gl_log_call(file!(), line!()) == false {
-            
-        }
+        if crate::renderer::gl_log_call(file!(), line!()) == false {}
     };
 }

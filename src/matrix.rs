@@ -90,12 +90,12 @@ impl Mat3x3f {
         }
     }
 
-    pub fn mult_vec(lhs: &Mat3x3f, rhs: &Vec3f) -> Vec3f {
+    pub fn mult_vec(lhs: &Mat3x3f, rhs: Vec3f) -> Vec3f {
         unsafe {
             let mut res = Vec3f::new(0.0, 0.0, 0.0);
-            res.x = (Vec3f::mult(&lhs.rows[0], rhs)).sum();
-            res.y = (Vec3f::mult(&lhs.rows[1], rhs)).sum();
-            res.z = (Vec3f::mult(&lhs.rows[2], rhs)).sum();
+            res.x = (lhs.rows[0] * rhs).sum();
+            res.y = (lhs.rows[1] * rhs).sum();
+            res.z = (lhs.rows[2] * rhs).sum();
             res
         }
     }
@@ -193,13 +193,14 @@ impl Mat4x4f {
         }
     }
 
-    pub fn mult_vec(lhs: &Mat4x4f, rhs: &Vec4f) -> Vec4f {
+    pub fn mult_vec(lhs: &Mat4x4f, rhs: Vec4f) -> Vec4f {
         unsafe {
             let mut res = Vec4f::new(0.0, 0.0, 0.0, 0.0);
-            res.x = (Vec4f::mult(&lhs.rows[0], rhs)).sum();
-            res.y = (Vec4f::mult(&lhs.rows[1], rhs)).sum();
-            res.z = (Vec4f::mult(&lhs.rows[2], rhs)).sum();
-            res.w = (Vec4f::mult(&lhs.rows[3], rhs)).sum();
+            res.x = (lhs.rows[0] * rhs).sum();
+            res.y = (lhs.rows[1] * rhs).sum();
+            res.z = (lhs.rows[2] * rhs).sum();
+            res.w = (lhs.rows[3] * rhs).sum();
+
             res
         }
     }

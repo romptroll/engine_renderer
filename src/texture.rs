@@ -25,6 +25,8 @@ use std::rc::Rc;
 use engine_core::error_log;
 use image::{GenericImageView, save_buffer};
 
+use crate::framebuffer::FrameBuffer;
+
 pub struct Texture {
     gl_texture_id : u32,
     width : u32,
@@ -39,8 +41,8 @@ impl Texture {
 			gl_call!(gl::GenTextures(1, &mut texture_id));
 			gl_call!(gl::BindTexture(gl::TEXTURE_2D, texture_id));
 
-			gl_call!(gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST 		as i32));
-			gl_call!(gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST 		as i32));
+			gl_call!(gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::LINEAR 		as i32));
+			gl_call!(gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::LINEAR 		as i32));
 			gl_call!(gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE 	as i32));
 			gl_call!(gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE 	as i32));
 
@@ -95,6 +97,23 @@ impl Texture {
 		unsafe {
 			gl_call!(gl::TexSubImage2D(gl::TEXTURE_2D, 0, x as i32, y as i32, width as i32, height as i32, gl::RGBA, gl::UNSIGNED_BYTE, pixels.as_ptr() as *const std::ffi::c_void));
 		}
+	}
+
+	pub fn get_pixels_u32(&self, x: u32, y: u32, width: u32, height: u32) -> Vec<u8> {
+		let mut data = vec![0; width as usize * height as usize * 4];
+		unsafe {
+			self.bind(0);
+			gl_call!(gl::GetBufferSubData(gl::TEXTURE_BUFFER, x as isize + y as isize * width as isize, width as isize * height as isize, data.as_mut_ptr() as *mut std::ffi::c_void));
+		}
+		data
+	}
+
+	pub fn get_pixels(&self, x: f32, y: f32, width: f32, height: f32) -> Vec<u8> {
+		let x = (x * self.width() as f32) as u32;
+		let y = (y * self.height() as f32) as u32;
+		let width = (width * self.width() as f32) as u32;
+		let height = (height * self.width() as f32) as u32;
+		self.get_pixels_u32(x, y, width, height)
 	}
     
     pub fn bind(&self, slot: u32) {
@@ -183,13 +202,41 @@ impl TextureRegion {
 		match strong {
 			Some(texture) => {
 				let self_x = self.x as f32 / texture.width() as f32;
-				let self_y = self.y as f32 / texture.width() as f32;
+				let self_y = self.y as f32 / texture.height() as f32;
 				texture.set_pixels(x+self_x, y+self_y, width, height, pixels);
 			},
 			None => {
 				error_log!("Tried to set pixels of None texture!");
 			}
 		}
+	}
+
+	pub fn get_pixels_u32(&self, x: u32, y: u32, width: u32, height: u32) -> Option<Vec<u8>> {
+		let strong = self.texture.upgrade();
+		match strong {
+			Some(texture) => {
+				return Some(texture.get_pixels_u32(self.x+x, self.y+y, self.x+width, self.y+height))
+			},
+			None => {
+				error_log!("Tried to get pixels of None texture!");
+			}
+		}
+		None
+	}
+
+	pub fn get_pixels(&self, x: f32, y: f32, width: f32, height: f32) -> Option<Vec<u8>> {
+		let strong = self.texture.upgrade();
+		match strong {
+			Some(texture) => {
+				let self_x = self.x as f32 / texture.width() as f32;
+				let self_y = self.y as f32 / texture.height() as f32;
+				return Some(texture.get_pixels(self_x+x, self_y+y, self_x+width, self_y+height))
+			},
+			None => {
+				error_log!("Tried to get pixels of None texture!");
+			}
+		}
+		None
 	}
 
 	pub fn bind(&mut self, slot: u32) {
@@ -339,6 +386,18 @@ impl Image {
 		Image::new(width, height, pixels)
 	}
 
+	pub fn from_framebuffer(fb: &FrameBuffer) -> Image {
+		Image::new(fb.texture().width, fb.texture().height, fb.get_pixels(0, 0, fb.texture().width, fb.texture().height))
+	}
+
+	pub fn from_texture(texture: &Rc<Texture>) -> Image {
+		Image::new(texture.width, texture.height, texture.get_pixels_u32(0, 0, texture.width, texture.height))
+	}
+
+	pub fn from_texture_region(texture: TextureRegion) -> Image {
+		Image::new(texture.width, texture.height, texture.get_pixels_u32(0, 0, texture.width, texture.height).unwrap())
+	}
+
 	pub fn to_file(&self, path: &str) {
 		let img = self.flip_horizontally();
 		let buff = img.buffer;
@@ -390,16 +449,15 @@ impl Image {
 	}
 
 	pub fn flip_horizontally(&self) -> Image {
-		let mut buff = Vec::with_capacity((self.width*self.height*4) as usize);
+		let mut image = Image::from_color(self.width, self.height, 0x00_00_00_FF);
 
-		for i in 0..(self.width*self.height) as usize {
-			buff.push(self.buffer[self.buffer.len()-1-i*4-3]);
-			buff.push(self.buffer[self.buffer.len()-1-i*4-2]);
-			buff.push(self.buffer[self.buffer.len()-1-i*4-1]);
-			buff.push(self.buffer[self.buffer.len()-1-i*4-0]);
+		for i in 0..self.height {
+			for j in 0..self.width {
+				image.set_rgba8(j, i, self.get_rgba8(j, self.height-i-1));
+			}
 		}
 
-		Image::new(self.width, self.height, buff)
+		image
 	}
 
 	pub fn get_rgba8(&self, x: u32, y: u32) -> u32 {
