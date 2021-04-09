@@ -7,11 +7,12 @@ edition = "2018"
 
 
 [dependencies]
-engine_core = {git = "https://github.com/romptroll/engine_core"}
-gl = "0.14.0"
-gl_loader = "0.1.2"
-image = "0.23.0"
-freetype-rs = "0.24.0"
-colored = "1.9.3"
-bus = "2.2.3"
-glfw = "0.37.0"
+wgpu = "*"
+#engine_core = {git = "https://github.com/romptroll/engine_core"}
+#gl = "0.14.0"
+#gl_loader = "0.1.2"
+#image = "0.23.0"
+#freetype-rs = "0.24.0"
+#colored = "1.9.3"
+#bus = "2.2.3"
+#glfw = "0.37.0"*/
